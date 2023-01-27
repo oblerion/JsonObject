@@ -1,5 +1,6 @@
 # JsonObject
 read json without dependencies
+- [[ in work ]] can use it for simple json, table and list not supported now
 
 # How use it
 your json file
