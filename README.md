@@ -10,6 +10,6 @@ your json file
 ```csharp
 JsonObject jo = new JsonObject("file.json");
 int x = jo.getInt("x");            //-> 5
-float size = jo.getFloat("size");  //-> 0.5
+//float size = jo.getFloat("size");  //-> 0.5 //not work
 string name = jo.getString("name");//-> levis
 ```
