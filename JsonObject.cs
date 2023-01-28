@@ -10,7 +10,7 @@ public class JsonObject
 		List<string> ldata = new List<string>();
 		int i_tps=0;
 		StreamReader file = File.OpenText(sfile);
-        string data = file.ReadToEnd();
+        	string data = file.ReadToEnd();
 		data = _filter(data);
 		data = _extract(data,'{','}');
 		Console.WriteLine($"{data}");
@@ -36,16 +36,16 @@ public class JsonObject
 		}
 	}
 	private bool IsNumeric(string s)
-    {
-        foreach (char c in s)
-        {
-            if (!char.IsDigit(c) && c != '.')
-            {
-                return false;
-            }
-        }
-        return true;
-    }
+   	{
+        	foreach (char c in s)
+        	{
+            		if (!char.IsDigit(c) && c != '.')
+            		{
+                		return false;
+            		}
+        	}
+        	return true;
+    	}
 	private string _filter(string s)
 	{
 		string ls="";
@@ -87,7 +87,6 @@ public class JsonObject
 				}
 			}
 		}
-
 		if(i_beg+i_end>0 && i_end-i_beg < s.Length) 
 			return s.Substring(i_beg,i_end-i_beg);
 		return "";
@@ -104,7 +103,6 @@ public class JsonObject
 			return s.Substring(i_beg,s.Length-i_beg);
 		return "";
 	}
-
 	public void print()
 	{
 		for(int i=0;i<_da.Count;i++)
@@ -134,5 +132,4 @@ public class JsonObject
 			o = float.Parse(v);
 		return o;
 	}
-	
 }
