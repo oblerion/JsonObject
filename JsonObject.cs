@@ -6,16 +6,16 @@ public class JsonObject
 	private Dictionary<string,string> _da = new Dictionary<string,string>(); 
 	public int Size{get=>_da.Count;}
 	private bool IsNumeric(string s)
-    {
-        foreach (char c in s)
-        {
-            if (!char.IsDigit(c) && c != '.')
-            {
-                return false;
-            }
-        }
-        return true;
-    }
+    	{
+        	foreach (char c in s)
+        	{
+            		if (!char.IsDigit(c) && c != '.')
+            		{
+                		return false;
+            		}
+        	}
+        	return true;
+    	}
 	private string _extract(string s,char cbegin,char cend)
 	{
 		int i_beg=-1;
@@ -52,7 +52,7 @@ public class JsonObject
 		int i_tps=-1;
 		string data=""; 
 		StreamReader file = File.OpenText(sfile);
-        string s = file.ReadToEnd();
+        	string s = file.ReadToEnd();
 		for(int i=0;i<s.Length;i++)
 		{
 			if(s[i]!=' ' || s[i]!='\n' || s[i]!='\b') 
@@ -99,5 +99,4 @@ public class JsonObject
 			o = float.Parse(v);
 		return o;
 	}
-	
 }
