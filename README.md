@@ -2,7 +2,7 @@
 read json without dependencies
 - [[ in work ]] can use it for simple json, table and list not supported now
 
-# install
+# Install
 just copy JsonObject.cs in your project
 
 # How use it
