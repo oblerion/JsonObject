@@ -7,6 +7,7 @@ your json file
 ```json
 {"x":5, "size": 0.5, "name":"levis"}
 ```
+your code
 ```csharp
 JsonObject jo = new JsonObject("file.json");
 int x = jo.getInt("x");            //-> 5
