@@ -1,0 +1,15 @@
+/home/desnot/GD/c#/JsonObject/bin/Debug/net6.0/JsonObject
+/home/desnot/GD/c#/JsonObject/bin/Debug/net6.0/JsonObject.deps.json
+/home/desnot/GD/c#/JsonObject/bin/Debug/net6.0/JsonObject.runtimeconfig.json
+/home/desnot/GD/c#/JsonObject/bin/Debug/net6.0/JsonObject.dll
+/home/desnot/GD/c#/JsonObject/bin/Debug/net6.0/ref/JsonObject.dll
+/home/desnot/GD/c#/JsonObject/bin/Debug/net6.0/JsonObject.pdb
+/home/desnot/GD/c#/JsonObject/obj/Debug/net6.0/JsonObject.csproj.AssemblyReference.cache
+/home/desnot/GD/c#/JsonObject/obj/Debug/net6.0/JsonObject.GeneratedMSBuildEditorConfig.editorconfig
+/home/desnot/GD/c#/JsonObject/obj/Debug/net6.0/JsonObject.AssemblyInfoInputs.cache
+/home/desnot/GD/c#/JsonObject/obj/Debug/net6.0/JsonObject.AssemblyInfo.cs
+/home/desnot/GD/c#/JsonObject/obj/Debug/net6.0/JsonObject.csproj.CoreCompileInputs.cache
+/home/desnot/GD/c#/JsonObject/obj/Debug/net6.0/JsonObject.dll
+/home/desnot/GD/c#/JsonObject/obj/Debug/net6.0/ref/JsonObject.dll
+/home/desnot/GD/c#/JsonObject/obj/Debug/net6.0/JsonObject.pdb
+/home/desnot/GD/c#/JsonObject/obj/Debug/net6.0/JsonObject.genruntimeconfig.cache

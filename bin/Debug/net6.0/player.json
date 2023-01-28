@@ -1,0 +1,7 @@
+{
+"class":player,
+"x":100,
+"y":50,
+"rot":7,
+"img":tank,
+"img2":turret_gatling}

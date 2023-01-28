@@ -5,33 +5,92 @@ public class JsonObject
 {
 	private Dictionary<string,string> _da = new Dictionary<string,string>(); 
 	public int Size{get=>_da.Count;}
+	public JsonObject(string sfile)
+	{
+		List<string> ldata = new List<string>();
+		int i_tps=0;
+		StreamReader file = File.OpenText(sfile);
+        string data = file.ReadToEnd();
+		data = _filter(data);
+		data = _extract(data,'{','}');
+		Console.WriteLine($"{data}");
+		for(int i=0;i<data.Length;i++)
+		{
+			if(i==data.Length-1)
+			{
+				ldata.Add(data.Substring(i_tps,i-i_tps+1));
+			}
+			else if(data[i]==',')
+			{
+				ldata.Add(data.Substring(i_tps,i-i_tps));
+				i_tps = i+1;
+			}
+		}
+		foreach(string s2 in ldata)
+		{
+		 	string name = _extract(s2,'"','"');
+		 	string value = _extract(s2,':');
+			if(value!="" && value[0]=='"') value = _extract(value,'"','"');
+		 	_da[name]=value;
+			Console.WriteLine($"{name} {value}...");
+		}
+	}
 	private bool IsNumeric(string s)
-    	{
-        	foreach (char c in s)
-        	{
-            		if (!char.IsDigit(c) && c != '.')
-            		{
-                		return false;
-            		}
-        	}
-        	return true;
-    	}
+    {
+        foreach (char c in s)
+        {
+            if (!char.IsDigit(c) && c != '.')
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+	private string _filter(string s)
+	{
+		string ls="";
+		for(int i=0;i<s.Length;i++)
+		{
+			
+			if(s[i]!=' ' && 
+				s[i]!='\n' && 
+				s[i]!='\b' &&
+				s[i]!='\r' &&
+				s[i]!='\t') 
+			{
+				ls+=s[i];
+			}
+		}
+		return ls;
+	}
 	private string _extract(string s,char cbegin,char cend)
 	{
 		int i_beg=-1;
 		int i_end=-1;
+		bool b_sameC= (cbegin==cend);
+		int i_nbSameC=0;
 		for(int i=0;i<s.Length;i++)
 		{
 			if(i_beg==-1 && s[i]==cbegin) i_beg = i+1;
+			else if(i_beg>-1 && s[i]==cbegin && !b_sameC)
+			{
+				i_nbSameC++;
+			}
 			else if(i_beg>-1 && s[i]==cend)
 			{
-				i_end = i;
-				break;
+				if(!b_sameC && i_nbSameC>0)
+					i_nbSameC--;
+				else
+				{
+					i_end = i;
+					break;
+				}
 			}
 		}
-		if(i_beg+i_end>0 && i_end-i_beg <= s.Length) 
+
+		if(i_beg+i_end>0 && i_end-i_beg < s.Length) 
 			return s.Substring(i_beg,i_end-i_beg);
-		return default(string);
+		return "";
 	}
 	private string _extract(string s,char cbegin)
 	{
@@ -43,45 +102,21 @@ public class JsonObject
 		}
 		if(i_beg+i_end>0 && i_end-i_beg <= s.Length) 
 			return s.Substring(i_beg,s.Length-i_beg);
-		return default(string);
+		return "";
 	}
-	public JsonObject(string sfile)
+
+	public void print()
 	{
-		int i_begin=-1;
-		int i_end=-1;
-		int i_tps=-1;
-		string data=""; 
-		StreamReader file = File.OpenText(sfile);
-        	string s = file.ReadToEnd();
-		for(int i=0;i<s.Length;i++)
+		for(int i=0;i<_da.Count;i++)
 		{
-			if(s[i]!=' ' || s[i]!='\n' || s[i]!='\b') 
-			{
-				data+=s[i];
-			}
-		}
-		for(int i=0;i<data.Length;i++)
-		{
-			if(data[i]=='{') 
-			{
-				i_begin=i;
-				i_tps = i+1;
-			}
-			else if(data[i]==',' || data[i]=='}')
-			{
-				string data2="";
-				data2 = data.Substring(i_tps,i-i_tps);
-				string name = _extract(data2,'"','"');
-				string value = _extract(data2,':');
-				_da[name]=value;
-				i_tps = i+1;
-			}
+			Console.WriteLine(_da.ElementAt(i));
 		}
 	}
 	public string getString(string name)
 	{
-		if(_da.ContainsKey(name)) return _da[name];
-		return default(string);
+		string ls = "";
+		if(_da.ContainsKey(name)) ls = _da[name];
+		return ls;
 	}
 	public int getInt(string name)
 	{
@@ -99,4 +134,5 @@ public class JsonObject
 			o = float.Parse(v);
 		return o;
 	}
+	
 }
