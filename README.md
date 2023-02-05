@@ -8,12 +8,12 @@ just copy JsonObject.cs in your project
 # How use it
 your json file
 ```json
-{"x":5, "size": 0.5, "name":"levis"}
+{"x":5, "size": 0.5, "name":"jake"}
 ```
 your code
 ```csharp
 JsonObject jo = new JsonObject("file.json");
 int x = jo.getInt("x");            //-> 5
 //float size = jo.getFloat("size");  //-> 0.5 //not work
-string name = jo.getString("name");//-> levis
+string name = jo.getString("name");//-> jake
 ```
