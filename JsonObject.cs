@@ -12,7 +12,7 @@ public class JsonObject
 		List<string> ldata = new List<string>();
 		int i_tps=0;
 		StreamReader file = File.OpenText(sfile);
-        	string data = file.ReadToEnd();
+        string data = file.ReadToEnd();
 		data = _filter(data);
 		data = _extract(data,'{','}');
 		Console.WriteLine($"{data}");
@@ -142,6 +142,7 @@ public class JsonObject
 	public int getInt(string name)
 	{
 		int o = -1;
+		Console.WriteLine("getInt "+name);
 		string v = getString(name);
 		if(v!=null)
 			o = Int32.Parse(v);
@@ -149,11 +150,24 @@ public class JsonObject
 	}
 	public float getFloat(string name)
 	{
-		float o = -1;
+		double o = -1;
 		string v = getString(name);
-		if(v!=null)
-			o = float.Parse(v);
-		return o;
+		if(v!=null && v.Contains('.'))
+		{
+			for(int i=0;i<v.Length;i++)
+			{
+				if(v.ElementAt(i)=='.')
+				{
+					o = (float)Int32.Parse(v.Substring(0,i));
+					string ls = v.Substring(i+1,v.Length-(i+1));
+					o += Int32.Parse(ls)/Math.Pow(10,ls.Length);
+					break;
+				}
+			}
+			
+			//o = float.Parse(v);
+		}
+		return (float)o;
 	}
 	
 }
