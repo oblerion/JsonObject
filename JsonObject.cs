@@ -12,7 +12,7 @@ public class JsonObject
 		List<string> ldata = new List<string>();
 		int i_tps=0;
 		StreamReader file = File.OpenText(sfile);
-        string data = file.ReadToEnd();
+        	string data = file.ReadToEnd();
 		data = _filter(data);
 		data = _extract(data,'{','}');
 		Console.WriteLine($"{data}");
