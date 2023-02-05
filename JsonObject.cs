@@ -7,10 +7,12 @@ public class JsonObject
 	public int Size{get=>_da.Count;}
 	public JsonObject(string sfile)
 	{
+		bool in_obj = false;
+		bool in_array = false;
 		List<string> ldata = new List<string>();
 		int i_tps=0;
 		StreamReader file = File.OpenText(sfile);
-        	string data = file.ReadToEnd();
+        string data = file.ReadToEnd();
 		data = _filter(data);
 		data = _extract(data,'{','}');
 		Console.WriteLine($"{data}");
@@ -20,7 +22,23 @@ public class JsonObject
 			{
 				ldata.Add(data.Substring(i_tps,i-i_tps+1));
 			}
-			else if(data[i]==',')
+			else if(data[i]=='[')
+			{
+				in_array=true;
+			}
+			else if(data[i]=='{')
+			{
+				in_obj=true;
+			}
+			else if(data[i]==']')
+			{
+				in_array=false;
+			}
+			else if(data[i]=='}')
+			{
+				in_obj=false;
+			}		
+			else if(data[i]==',' && !in_array && !in_obj)
 			{
 				ldata.Add(data.Substring(i_tps,i-i_tps));
 				i_tps = i+1;
@@ -30,22 +48,26 @@ public class JsonObject
 		{
 		 	string name = _extract(s2,'"','"');
 		 	string value = _extract(s2,':');
-			if(value!="" && value[0]=='"') value = _extract(value,'"','"');
+			if(value!="")
+			{
+				if(value[0]=='"') value = _extract(value,'"','"');
+			}
 		 	_da[name]=value;
 			Console.WriteLine($"{name} {value}...");
 		}
 	}
+
 	private bool IsNumeric(string s)
-   	{
-        	foreach (char c in s)
-        	{
-            		if (!char.IsDigit(c) && c != '.')
-            		{
-                		return false;
-            		}
-        	}
-        	return true;
-    	}
+    {
+        foreach (char c in s)
+        {
+            if (!char.IsDigit(c) && c != '.')
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 	private string _filter(string s)
 	{
 		string ls="";
@@ -87,6 +109,7 @@ public class JsonObject
 				}
 			}
 		}
+
 		if(i_beg+i_end>0 && i_end-i_beg < s.Length) 
 			return s.Substring(i_beg,i_end-i_beg);
 		return "";
@@ -132,4 +155,5 @@ public class JsonObject
 			o = float.Parse(v);
 		return o;
 	}
+	
 }
