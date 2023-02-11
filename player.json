@@ -2,8 +2,10 @@
     "class":"player",
     "x":100,
     "y":50,
+    "scale":0.5,
     "rot":7,
     "img":"tank",
     "img2":"turret_gatling",
-    "table":[1,1,1,1]
+    "table":[1,1,1,1],
+    "obj":{"x":0,"c":"eee"}
 }
