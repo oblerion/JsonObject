@@ -19,3 +19,4 @@ string name = jo.getString("name");//-> jake
 int point_x = jo.getObject("point").getInt("x"); // -> 12
 int point_y = jo.getObject("point").getInt("y"); // -> 34
 ```
+[full api](https://github.com/oblerion/JsonObject/wiki)
