@@ -1,9 +1,10 @@
 
-html {
+
+html,h1,code {
+	font-family: 'monospace';
 }
 h1 {
    color: blue;
-
 }
 p {
    color: black;
