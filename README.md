@@ -1,5 +1,5 @@
 # JsonObject.cs
-read json without dependencies
+c# read json without dependencies
 - [[ in work ]] can use it for simple json, array not supported now
 
 # Install
