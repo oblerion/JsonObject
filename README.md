@@ -13,11 +13,14 @@ your json file
 your code
 ```csharp
 JsonObject jo = new JsonObject("file.json");
-int x = jo.GetInt("x");            //-> 5
-float size = jo.GetFloat("size");  //-> 0,5
-string name = jo.GetString("name");//-> jake
-int point_x = jo.GetObject("point").GetInt("x"); // -> 12
-int point_y = jo.GetObject("point").GetInt("y"); // -> 34
-bool visible = jo.GetBool("visible"); //-> true
+if(jo.IsEmpty()==false)
+{
+  int x = jo.GetInt("x");            //-> 5
+  float size = jo.GetFloat("size");  //-> 0,5
+  string name = jo.GetString("name");//-> jake
+  int point_x = jo.GetObject("point").GetInt("x"); // -> 12
+  int point_y = jo.GetObject("point").GetInt("y"); // -> 34
+  bool visible = jo.GetBool("visible"); //-> true
+}
 ```
 [full api](https://github.com/oblerion/JsonObject/wiki)
