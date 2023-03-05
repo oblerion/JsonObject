@@ -8,15 +8,16 @@ just copy JsonObject.cs in your project
 # How use it
 your json file
 ```json
-{"x":5, "size": 0.5, "name":"jake", "point":{"x":12, "y":34}}
+{"x":5, "size": 0.5, "name":"jake", "point":{"x":12, "y":34}, "visible":true}
 ```
 your code
 ```csharp
 JsonObject jo = new JsonObject("file.json");
-int x = jo.getInt("x");            //-> 5
-float size = jo.getFloat("size");  //-> 0,5
-string name = jo.getString("name");//-> jake
-int point_x = jo.getObject("point").getInt("x"); // -> 12
-int point_y = jo.getObject("point").getInt("y"); // -> 34
+int x = jo.GetInt("x");            //-> 5
+float size = jo.GetFloat("size");  //-> 0,5
+string name = jo.GetString("name");//-> jake
+int point_x = jo.GetObject("point").GetInt("x"); // -> 12
+int point_y = jo.GetObject("point").GetInt("y"); // -> 34
+bool visible = jo.GetBool("visible"); //-> true
 ```
 [full api](https://github.com/oblerion/JsonObject/wiki)
