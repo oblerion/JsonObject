@@ -3,6 +3,6 @@
     private static void Main(string[] args)
     {
         JsonObject jo = new JsonObject("player.json");
-        jo.print();
+        jo.Print();
     }
 }
