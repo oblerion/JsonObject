@@ -1,6 +1,7 @@
-/*MIT License
-
+/*
+MIT License JsonObject v0.2-1
 Copyright (c) 2023 oblerion
+
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +30,8 @@ public class JsonObject
 	private Dictionary<string,int> _di = new Dictionary<string, int>();
 	private Dictionary<string,float> _df = new Dictionary<string, float>();
 	private Dictionary<string,JsonObject> _dj = new Dictionary<string,JsonObject>();
-
+	private Dictionary<string,bool> _db = new Dictionary<string, bool>();
+	private bool _isVoid = false;
 	public JsonObject(string sfile)
 	{
 		int in_obj = 0;
@@ -38,58 +40,72 @@ public class JsonObject
 		int i_tps=0;
 		string data;
 		data = _readFile(sfile);
-		if(data.Length==0) data=sfile;
-		data = _filter(data);
-		data = _extract(data,'{','}');
-		Console.WriteLine($"{data}");
-		for(int i=0;i<data.Length;i++)
+		if(data.Length==0) 
+			data=sfile;
+		if(data.Length>1)
 		{
-			switch(data[i])
+			data = _filter(data);
+			data = _extract(data,'{','}');
+			//Console.WriteLine($"{data}");
+			for(int i=0;i<data.Length;i++)
 			{
-				case '[': in_array++;
-				break;
-				case '{': in_obj++;
-				break;
-				case ']': in_array--;
-				break;
-				case '}': in_obj--;
-				break;
-				case ',':
-					if(in_array<=0 && in_obj<=0)
+				switch(data[i])
+				{
+					case '[': in_array++;
+					break;
+					case '{': in_obj++;
+					break;
+					case ']': in_array--;
+					break;
+					case '}': in_obj--;
+					break;
+					case ',':
+						if(in_array<=0 && in_obj<=0)
+						{
+							ldata.Add(data.Substring(i_tps,i-i_tps));
+							i_tps = i+1;
+						}
+					break;
+				}
+				if(i==data.Length-1)
+				{
+					ldata.Add(data.Substring(i_tps,i-i_tps+1));
+				}
+				
+			}
+			foreach(string s2 in ldata)
+			{
+				string name = _extract(s2,'"','"');
+				string value = _extract(s2,':');
+				if(value!="")
+				{
+					if(value[0]=='"') _addString(name,value);
+					else if(value[0]=='{')
 					{
-						ldata.Add(data.Substring(i_tps,i-i_tps));
-						i_tps = i+1;
+						_dj[name] = new JsonObject(value);
 					}
-				break;
-			}
-			if(i==data.Length-1)
-			{
-				ldata.Add(data.Substring(i_tps,i-i_tps+1));
-			}
-			
-		}
-		foreach(string s2 in ldata)
-		{
-		 	string name = _extract(s2,'"','"');
-		 	string value = _extract(s2,':');
-			if(value!="")
-			{
-				if(value[0]=='"') _addString(name,value);
-				else if(value[0]=='{')
-				{
-					_dj[name] = new JsonObject(value);
-				}
-				else if(value[0]=='[')
-				{
+					else if(value[0]=='[')
+					{
 
+					}
+					else if(value=="true" || value=="false")
+					{
+						bool lbool=false;
+						if(value=="true") lbool=true;
+						_db[name]=lbool;
+					}
+					else
+					{
+						_addInt(name,value);
+						_addFloat(name,value);
+					}
 				}
-				else
-				{
-					_addInt(name,value);
-					_addFloat(name,value);
-				}
+				//Console.WriteLine($"{name} {value}...");
 			}
-			Console.WriteLine($"{name} {value}...");
+		}
+		else
+		{
+			_isVoid=true;
 		}
 	}
 
@@ -203,9 +219,10 @@ public class JsonObject
 	public override string ToString()
 	{
 		string s="{\n";
+		if(_isVoid) return "this JsonObject is empty";
 		foreach (var (name,value) in _ds)
 		{
-			s = String.Concat(s,$"\t[{name}] {value}\n");
+			s = String.Concat(s,$"\t[{name}] "+'"'+$"{value}"+'"'+"\n");
 		}
 		foreach (var (name,value) in _di)
 		{
@@ -215,35 +232,51 @@ public class JsonObject
 		{
 			s = String.Concat(s,$"\t[{name}] {value}\n");
 		}
+		foreach (var (name,value) in _db)
+		{
+			s = String.Concat(s,$"\t[{name}] {value}\n");
+		}
 		foreach (var (name,value) in _dj)
 		{
 			s = String.Concat(s,$"\t[{name}] {value.ToString()} "+"\t}\n");
 		}
+
 		return s;
 	}
-	public void print()
+	public bool IsEmpty()
+	{
+		if(_isVoid) return true;
+		return false;
+	}
+	public void Print()
 	{
 		Console.WriteLine($"{ToString()}"+"}");
 	}
-	public string getString(string name)
+	public bool GetBool(string name)
+	{
+		bool s = false;
+		if(_db.ContainsKey(name)) s = _db[name];
+		return s;
+	}
+	public string GetString(string name)
 	{
 		string s = "";
 		if(_ds.ContainsKey(name)) s = _ds[name];
 		return s;
 	}
-	public int getInt(string name)
+	public int GetInt(string name)
 	{
 		int o = -1;
 		if(_di.ContainsKey(name)) o = _di[name];
 		return o;
 	}
-	public float getFloat(string name)
+	public float GetFloat(string name)
 	{
 		float o = -1;
 		if(_df.ContainsKey(name)) o = _df[name];
 		return o;
 	}
-	public JsonObject getObject(string name)
+	public JsonObject GetObject(string name)
 	{
 		if(_dj.ContainsKey(name)) return _dj[name];
 		return new JsonObject("");
