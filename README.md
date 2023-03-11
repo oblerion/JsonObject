@@ -16,7 +16,10 @@ just copy JsonObject.cs in your project
 # How use it
 your json file
 ```json
-{"x":5, "size": 0.5, "name":"jake", "point":{"x":12, "y":34}, "visible":true, "array":[0,2,4]}
+{
+"x":5, "size": 0.5, "name":"jake", "point":{"x":12, "y":34}, 
+"visible":true, "array":[0,2,4]
+}
 ```
 your code
 ```csharp
