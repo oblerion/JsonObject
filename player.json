@@ -6,7 +6,8 @@
     "scale":0.5,
     "rot":7,
     "img":"tank",
+    "table2":[1,34,9,2],
     "img2":"turret_gatling",
-    "table":[1,1,1,1],
-    "obj":{"x":0,"c":"eee"}
+    "table":[13,34,90,12],
+    "obj":{"x":0,"c":"eee","t":[0,0,1]}
 }

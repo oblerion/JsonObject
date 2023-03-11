@@ -1,5 +1,5 @@
 /*
-MIT License JsonObject v0.2-1
+MIT License JsonObject v0.2-2
 Copyright (c) 2023 oblerion
 
 
@@ -31,6 +31,8 @@ public class JsonObject
 	private Dictionary<string,float> _df = new Dictionary<string, float>();
 	private Dictionary<string,JsonObject> _dj = new Dictionary<string,JsonObject>();
 	private Dictionary<string,bool> _db = new Dictionary<string, bool>();
+	private Dictionary<string,List<int>> _dai1 = new Dictionary<string, List<int>>();
+	// private Dictionary<string,List<List<int>>> _dai2 = new Dictionary<string, List<List<int>>>();
 	private bool _isVoid = false;
 	public JsonObject(string sfile)
 	{
@@ -82,17 +84,15 @@ public class JsonObject
 					if(value[0]=='"') _addString(name,value);
 					else if(value[0]=='{')
 					{
-						_dj[name] = new JsonObject(value);
+						_addObject(name,value);
 					}
 					else if(value[0]=='[')
 					{
-
+						_addArray(name,value);
 					}
 					else if(value=="true" || value=="false")
 					{
-						bool lbool=false;
-						if(value=="true") lbool=true;
-						_db[name]=lbool;
+						_addBool(name,value);
 					}
 					else
 					{
@@ -108,7 +108,46 @@ public class JsonObject
 			_isVoid=true;
 		}
 	}
+	private void _addArray(string name,string value)
+	{
+		string ext = this._extract(value,'[',']');
+		if(ext[0]!='[')
+		{
+			this._dai1[name] = new List<int>();
+			string tstr="";
 
+			for(int i=0;i<ext.Length;i++)
+			{
+				if(ext[i]==',')
+				{
+					this._dai1[name].Add(Int32.Parse(tstr));
+					tstr = "";
+				}
+				else
+				{
+					tstr += ext[i];
+				}
+			}
+			this._dai1[name].Add(Int32.Parse(tstr));
+		}
+		else
+		{
+			// this._dai2[name] = new List<List<int>>();
+
+			// string ext2 = this._extract(ext,'[',']');
+
+		}
+	}
+	private void _addObject(string name,string value)
+	{
+		_dj[name] = new JsonObject(value);
+	}
+	private void _addBool(string name,string value)
+	{
+		bool lbool=false;
+		if(value=="true") lbool=true;
+		_db[name]=lbool;
+	}
 	private void _addString(string name,string value)
 	{
 		_ds[name] =	_extract(value,'"','"');
@@ -236,9 +275,21 @@ public class JsonObject
 		{
 			s = String.Concat(s,$"\t[{name}] {value}\n");
 		}
+		foreach (var (name,value) in _dai1)
+		{
+			s = String.Concat(s,$"\t[{name}] [");
+			for(int i=0;i<value.Count;i++)
+			{
+				Console.WriteLine($"{i}");
+				s = String.Concat(s,$" {value[i]}");
+				if(i<value.Count-1) s += ", ";
+			}
+			s += "]\n";
+		}
 		foreach (var (name,value) in _dj)
 		{
-			s = String.Concat(s,$"\t[{name}] {value.ToString()} "+"\t}\n");
+			s += "\t["+String.Format("{0}",name)+"] ";
+			s += $"{value.ToString()} "+"\t}\n";
 		}
 
 		return s;
@@ -251,6 +302,11 @@ public class JsonObject
 	public void Print()
 	{
 		Console.WriteLine($"{ToString()}"+"}");
+	}
+	public List<int> GetArray(string name)
+	{
+		if(_dai1.ContainsKey(name)) return _dai1[name];
+		return new List<int>();
 	}
 	public bool GetBool(string name)
 	{
