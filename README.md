@@ -1,6 +1,6 @@
 # JsonObject.cs
 c# read json without dependencies
-- [[ in work ]] can use it for simple json, array not supported now
+- [[ in work ]] can use it for simple json, array 2d not supported now
 # Features
 - read int
 - read float
