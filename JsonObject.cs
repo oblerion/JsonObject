@@ -111,6 +111,7 @@ public class JsonObject
 	private void _addArray(string name,string value)
 	{
 		string ext = this._extract(value,'[',']');
+		if(ext.Length==0) return;
 		if(ext[0]!='[')
 		{
 			this._dai1[name] = new List<int>();
