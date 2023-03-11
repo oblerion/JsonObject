@@ -281,7 +281,6 @@ public class JsonObject
 			s = String.Concat(s,$"\t[{name}] [");
 			for(int i=0;i<value.Count;i++)
 			{
-				Console.WriteLine($"{i}");
 				s = String.Concat(s,$" {value[i]}");
 				if(i<value.Count-1) s += ", ";
 			}
