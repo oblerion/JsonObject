@@ -6,6 +6,7 @@ c# read json without dependencies
 - read float
 - read string
 - read bool
+- read int array 1D
 - read object
 - get object empty or reading file error
 
@@ -15,7 +16,7 @@ just copy JsonObject.cs in your project
 # How use it
 your json file
 ```json
-{"x":5, "size": 0.5, "name":"jake", "point":{"x":12, "y":34}, "visible":true}
+{"x":5, "size": 0.5, "name":"jake", "point":{"x":12, "y":34}, "visible":true, "array":[0,2,4]}
 ```
 your code
 ```csharp
@@ -28,6 +29,7 @@ if(jo.IsEmpty()==false)
   int point_x = jo.GetObject("point").GetInt("x"); // -> 12
   int point_y = jo.GetObject("point").GetInt("y"); // -> 34
   bool visible = jo.GetBool("visible"); //-> true
+  List<int> arr = jo.GetArray("array");
 }
 ```
 [full api](https://github.com/oblerion/JsonObject/wiki)
