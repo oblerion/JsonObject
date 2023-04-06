@@ -1,13 +1,13 @@
 # JsonObject.cs
-c# read json without dependencies
+c# read/write json without dependencies
 - [[ in work ]] can use it for simple json, array 2d not supported now
 # Features
-- read int
-- read float
-- read string
-- read bool
-- read int array 1D
-- read object
+- read/write int
+- read/write float
+- read/write string
+- read/write bool
+- read/write int array 1D
+- read/write object
 - get object empty or reading file error
 
 # Install
