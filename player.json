@@ -8,6 +8,6 @@
     "img":"tank",
     "table2":[1,34,9,2],
     "img2":"turret_gatling",
-    "table":[13,34,90,12],
+    "table":[],
     "obj":{"x":0,"c":"eee","t":[0,0,1]}
 }

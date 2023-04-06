@@ -1,5 +1,5 @@
 /*
-MIT License JsonObject v0.2-2
+MIT License JsonObject v0.3
 Copyright (c) 2023 oblerion
 
 
@@ -33,7 +33,9 @@ public class JsonObject
 	private Dictionary<string,bool> _db = new Dictionary<string, bool>();
 	private Dictionary<string,List<int>> _dai1 = new Dictionary<string, List<int>>();
 	// private Dictionary<string,List<List<int>>> _dai2 = new Dictionary<string, List<List<int>>>();
-	private bool _isVoid = false;
+	private List<string> _list_obj_key = new List<string>();
+	public JsonObject()
+	{}
 	public JsonObject(string sfile)
 	{
 		int in_obj = 0;
@@ -47,7 +49,8 @@ public class JsonObject
 		if(data.Length>1)
 		{
 			data = _filter(data);
-			data = _extract(data,'{','}');
+			if(data[0]=='{') data = _extract(data,'{','}');
+			// else if(data[0]=='[') data = _extract(data,'[',']');
 			//Console.WriteLine($"{data}");
 			for(int i=0;i<data.Length;i++)
 			{
@@ -77,42 +80,84 @@ public class JsonObject
 			}
 			foreach(string s2 in ldata)
 			{
-				string name = _extract(s2,'"','"');
-				string value = _extract(s2,':');
-				if(value!="")
+				if(s2[0]=='"')
 				{
-					if(value[0]=='"') _addString(name,value);
-					else if(value[0]=='{')
+					string name = _extract(s2,'"','"');
+					string value = _extract(s2,':');
+					if(value!="")
 					{
-						_addObject(name,value);
-					}
-					else if(value[0]=='[')
-					{
-						_addArray(name,value);
-					}
-					else if(value=="true" || value=="false")
-					{
-						_addBool(name,value);
-					}
-					else
-					{
-						_addInt(name,value);
-						_addFloat(name,value);
+						if(value[0]=='"') _addString(name,value);
+						else if(value[0]=='{')
+						{
+							_list_obj_key.Add(name);
+							_addObject(name,value);
+						}
+						else if(value[0]=='[')
+						{
+							_addArray(name,value);
+						}
+						else if(value=="true" || value=="false")
+						{
+							_addBool(name,value);
+						}
+						else
+						{
+							_addInt(name,value);
+							_addFloat(name,value);
+						}
 					}
 				}
 				//Console.WriteLine($"{name} {value}...");
 			}
-		}
-		else
-		{
-			_isVoid=true;
 		}
 	}
 	private void _addArray(string name,string value)
 	{
 		string ext = this._extract(value,'[',']');
 		if(ext.Length==0) return;
-		if(ext[0]!='[')
+		
+		if(ext[0]=='[')
+		{
+			// this._dai2[name] = new List<List<int>>();
+
+			// string ext2 = this._extract(ext,'[',']');
+		}
+		else if(ext[0]=='{')
+		{
+			int in_array=0;
+			int in_obj=0;
+			string tstr="";
+			JsonObject jo = new JsonObject("");
+			for(int i=0;i<ext.Length;i++)
+			{
+				switch(ext[i])
+				{
+					case '[': in_array++;
+					break;
+					case '{': in_obj++;
+					break;
+					case ']': in_array--;
+					break;
+					case '}': in_obj--;
+					break;
+					case ',':
+						if(in_array<=0 && in_obj<=0)
+						{
+							jo._list_obj_key.Add($"{jo.GetNbObject()}");
+							jo._addObject($"{jo.GetNbObject()}",tstr);
+							tstr = "";
+						}else tstr += ext[i];
+					break;
+				}
+				if(ext[i]!=',')
+					tstr += ext[i];
+			}
+			jo._list_obj_key.Add($"{jo.GetNbObject()}");
+			jo._addObject($"{jo.GetNbObject()}",tstr);
+			_list_obj_key.Add(name);
+			_dj[name]=jo;
+		}
+		else
 		{
 			this._dai1[name] = new List<int>();
 			string tstr="";
@@ -130,13 +175,6 @@ public class JsonObject
 				}
 			}
 			this._dai1[name].Add(Int32.Parse(tstr));
-		}
-		else
-		{
-			// this._dai2[name] = new List<List<int>>();
-
-			// string ext2 = this._extract(ext,'[',']');
-
 		}
 	}
 	private void _addObject(string name,string value)
@@ -159,19 +197,24 @@ public class JsonObject
 	}
 	private void _addFloat(string name,string value)
 	{
-		if(value!=null && value.Contains('.'))
+		if(value!=null)
 		{
-			for(int i=0;i<value.Length;i++)
+			if(value.Contains('.'))
 			{
-				if(value.ElementAt(i)=='.')
+				for(int i=0;i<value.Length;i++)
 				{
-					double o = (float)Int32.Parse(value.Substring(0,i));
-					string ls = value.Substring(i+1,value.Length-(i+1));
-					o += Int32.Parse(ls)/Math.Pow(10,ls.Length);
-					_df[name] = (float)o;
-					break;
-				}
-			} 
+					if(value[i]=='.')
+					{
+						double o = (float)Int32.Parse(value.Substring(0,i));
+						string ls = value.Substring(i+1,value.Length-(i+1));
+						o += Int32.Parse(ls)/Math.Pow(10,ls.Length);
+						_df[name] = (float)o;
+						break;
+					}
+				} 
+			}
+			// else if(Int32.Parse(value)==0) 
+			// 	_df[name]=0;
 		}
 	}
 	private bool IsNumeric(string s)
@@ -196,7 +239,14 @@ public class JsonObject
 		}
 		return "";
 	}
-
+	public  void WriteFile(string sfile)
+	{
+		if(File.Exists(sfile)) File.Delete(sfile);
+		string sdata;
+		if(IsEmpty()) sdata = "{\n}";
+		else sdata = ToString();
+		File.AppendAllText(sfile,sdata);
+	}
 
 	private string _filter(string s)
 	{
@@ -258,84 +308,163 @@ public class JsonObject
 	}
 	public override string ToString()
 	{
-		string s="{\n";
-		if(_isVoid) return "this JsonObject is empty";
+		int i_nb=0;
+		int nb = _ds.Count+_di.Count+_df.Count+_db.Count+_dai1.Count+_dj.Count;
+		string[] as_key = new string[nb];
+		string[] as_value = new string[nb];
+		if(IsEmpty()) return " ";//"this JsonObject is empty";
 		foreach (var (name,value) in _ds)
 		{
-			s = String.Concat(s,$"\t[{name}] "+'"'+$"{value}"+'"'+"\n");
+			as_key[i_nb]='"'+$"{name}"+'"';
+			as_value[i_nb]='"'+$"{value}"+'"';
+			i_nb++;
 		}
 		foreach (var (name,value) in _di)
 		{
-			s = String.Concat(s,$"\t[{name}] {value}\n");
+			as_key[i_nb]='"'+$"{name}"+'"';
+			as_value[i_nb]=$"{value}";
+			i_nb++;
 		}
 		foreach (var (name,value) in _df)
 		{
-			s = String.Concat(s,$"\t[{name}] {value}\n");
+			int iuni = (int)Math.Floor(value);
+			int idec = (int)Math.Floor(value*10000)-iuni*10000;
+			as_key[i_nb]='"'+$"{name}"+'"';
+			as_value[i_nb]=$"{iuni}.{idec}";
+			i_nb++;
 		}
 		foreach (var (name,value) in _db)
 		{
-			s = String.Concat(s,$"\t[{name}] {value}\n");
+			string sdata;
+			if(value) sdata="true";
+			else sdata="false";
+			as_key[i_nb]='"'+$"{name}"+'"';
+			as_value[i_nb]=sdata;
+			i_nb++;
 		}
 		foreach (var (name,value) in _dai1)
 		{
-			s = String.Concat(s,$"\t[{name}] [");
+			string sdata;
+			sdata = "[";
 			for(int i=0;i<value.Count;i++)
 			{
-				s = String.Concat(s,$" {value[i]}");
-				if(i<value.Count-1) s += ", ";
+				sdata += $" {value[i]}";
+				if(i<value.Count-1) sdata += ", ";
 			}
-			s += "]\n";
+			sdata += "]";
+			as_key[i_nb]='"'+$"{name}"+'"';
+			as_value[i_nb]=sdata;
+			i_nb++;
 		}
 		foreach (var (name,value) in _dj)
 		{
-			s += "\t["+String.Format("{0}",name)+"] ";
-			s += $"{value.ToString()} "+"\t}\n";
+			as_key[i_nb]='"'+$"{name}"+'"';
+			as_value[i_nb]=$"{value.ToString()}";
+			i_nb++;
 		}
-
+		string s="{";
+		for(int i=0;i<nb;i++)
+		{
+			s+= "\n" + as_key[i] + " :" + as_value[i];
+			if(i<nb-1) s+= ",";
+		}
+		s += "\n}";
 		return s;
 	}
 	public bool IsEmpty()
 	{
-		if(_isVoid) return true;
+		if(_ds.Count+_di.Count+_df.Count+_dj.Count+_db.Count+_dai1.Count<=0) return true;
 		return false;
 	}
 	public void Print()
 	{
-		Console.WriteLine($"{ToString()}"+"}");
+		Console.WriteLine($"{ToString()}");
 	}
-	public List<int> GetArray(string name)
+	public int[] GetArray(string key)
 	{
-		if(_dai1.ContainsKey(name)) return _dai1[name];
-		return new List<int>();
+		if(_dai1.ContainsKey(key)) 
+		{	
+			int[] la;
+			int li=0;
+			la = new int[_dai1[key].Count];
+			foreach(int v in _dai1[key])
+			{
+				la[li] = v;
+				li++;
+			}
+			return la;
+		}
+		return new int[1];//default(int[]);
 	}
-	public bool GetBool(string name)
+	public bool GetBool(string key)
 	{
 		bool s = false;
-		if(_db.ContainsKey(name)) s = _db[name];
+		if(_db.ContainsKey(key)) s = _db[key];
 		return s;
 	}
-	public string GetString(string name)
+	public string GetString(string key)
 	{
 		string s = "";
-		if(_ds.ContainsKey(name)) s = _ds[name];
+		if(_ds.ContainsKey(key)) s = _ds[key];
 		return s;
 	}
-	public int GetInt(string name)
+	public int GetInt(string key)
 	{
 		int o = -1;
-		if(_di.ContainsKey(name)) o = _di[name];
+		if(_di.ContainsKey(key)) o = _di[key];
 		return o;
 	}
-	public float GetFloat(string name)
+	public float GetFloat(string key)
 	{
 		float o = -1;
-		if(_df.ContainsKey(name)) o = _df[name];
+		if(_df.ContainsKey(key)) o = _df[key];
 		return o;
 	}
-	public JsonObject GetObject(string name)
+	public JsonObject GetObject(string key)
 	{
-		if(_dj.ContainsKey(name)) return _dj[name];
+		if(_dj.ContainsKey(key)) return _dj[key];
 		return new JsonObject("");
+	}
+	public JsonObject GetObject(int id)
+	{
+		if(id>-1 &&  _list_obj_key.Count>id)
+		{
+			string skey = _list_obj_key[id];
+			if(_dj.ContainsKey(skey)) return _dj[skey];
+		}
+		return new JsonObject("");
+	}
+	public int GetNbObject()
+	{
+		return _list_obj_key.Count;
+	}
+	public void SetArray(string key,int[] value)
+	{
+		_dai1[key] = new List<int>();
+		for(int i=0;i<value.Length;i++)
+		{
+			_dai1[key].Add(value[i]);
+		}
+	}
+	public void SetObject(string key,JsonObject value)
+	{
+		_dj[key]=value;
+	}
+	public void SetBool(string key,bool value)
+	{
+		_db[key]=value;
+	}
+	public void SetString(string key,string value)
+	{
+		_ds[key]=value;
+	}
+	public void SetInt(string key,int value)
+	{
+		_di[key]=value;
+	}
+	public void SetFloat(string key,float value)
+	{
+		_df[key]=value;
 	}
 	
 }
