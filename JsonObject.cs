@@ -143,8 +143,7 @@ public class JsonObject
 					case ',':
 						if(in_array<=0 && in_obj<=0)
 						{
-							jo._list_obj_key.Add($"{jo.GetNbObject()}");
-							jo._addObject($"{jo.GetNbObject()}",tstr);
+							jo.SetObject($"{jo.GetNbObject()}",new JsonObject(tstr));
 							tstr = "";
 						}else tstr += ext[i];
 					break;
@@ -152,10 +151,8 @@ public class JsonObject
 				if(ext[i]!=',')
 					tstr += ext[i];
 			}
-			jo._list_obj_key.Add($"{jo.GetNbObject()}");
-			jo._addObject($"{jo.GetNbObject()}",tstr);
-			_list_obj_key.Add(name);
-			_dj[name]=jo;
+			jo.SetObject($"{jo.GetNbObject()}",new JsonObject(tstr));
+			SetObject(name,jo);
 		}
 		else
 		{
@@ -423,7 +420,7 @@ public class JsonObject
 	public JsonObject GetObject(string key)
 	{
 		if(_dj.ContainsKey(key)) return _dj[key];
-		return new JsonObject("");
+		return new JsonObject();
 	}
 	public JsonObject GetObject(int id)
 	{
@@ -432,7 +429,7 @@ public class JsonObject
 			string skey = _list_obj_key[id];
 			if(_dj.ContainsKey(skey)) return _dj[skey];
 		}
-		return new JsonObject("");
+		return new JsonObject();
 	}
 	public int GetNbObject()
 	{
@@ -448,6 +445,7 @@ public class JsonObject
 	}
 	public void SetObject(string key,JsonObject value)
 	{
+		if(IsNumeric(key)) _list_obj_key.Add(key);
 		_dj[key]=value;
 	}
 	public void SetBool(string key,bool value)

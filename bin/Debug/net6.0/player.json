@@ -1,7 +1,13 @@
 {
-"class":player,
-"x":100,
-"y":50,
-"rot":7,
-"img":tank,
-"img2":turret_gatling}
+    "class":"player",
+    "x":100,
+    "y":50,
+    "visible":false,
+    "scale":0.5,
+    "rot":7,
+    "img":"tank",
+    "table2":[1,34,9,2],
+    "img2":"turret_gatling",
+    "table":[],
+    "obj":{"x":0,"c":"eee","t":[0,0,1]}
+}
